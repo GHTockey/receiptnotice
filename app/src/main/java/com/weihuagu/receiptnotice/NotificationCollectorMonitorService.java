@@ -111,7 +111,7 @@ public class NotificationCollectorMonitorService extends Service {
                 mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                         @Override
                         public void call(Object... args) {
-                                LogUtil.infoLog("socket disconnected,try start echo in 5 secend");
+                                LogUtil.infoLog("socket 断开连接，尝试在 5 秒后启动");
                                 try{
                                         Thread.sleep(5000);
                                 }catch(InterruptedException e){
@@ -135,7 +135,7 @@ public class NotificationCollectorMonitorService extends Service {
                 this.echotimertask=returnEchoTimerTask();
                 this.timer=new Timer();
                 int intervalmilliseconds = Integer.parseInt(this.echointerval)*1000;
-                LogUtil.infoLog("now socketio timer milliseconds:"+intervalmilliseconds);
+                LogUtil.infoLog("现在 Socketio 计时器毫秒:"+intervalmilliseconds);
                 timer.schedule(echotimertask,5*1000,intervalmilliseconds);
         }
         private TimerTask returnEchoTimerTask(){
@@ -146,10 +146,10 @@ public class NotificationCollectorMonitorService extends Service {
                                         restartEchoTimer();
                                         return;
                                 }
-                                LogUtil.debugLog("once socketio timer task run");
+                                LogUtil.debugLog("socketio 计时器任务运行一次");
                                 boolean flag= echoServer();
                                 if(!flag)
-                                        LogUtil.debugLog("socketio timer task not have a server");
+                                        LogUtil.debugLog("socketio 计时器任务没有服务器");
                         }
                 };
         }
@@ -162,7 +162,7 @@ public class NotificationCollectorMonitorService extends Service {
                         echotimertask.cancel();
                         echotimertask = null;
                 }
-                LogUtil.debugLog("restart echo timer task");
+                LogUtil.debugLog("重新启动 echo 计时器任务");
                 startEchoTimer();
         }
         private boolean isIntervalMatchPreference(){
@@ -187,7 +187,7 @@ public class NotificationCollectorMonitorService extends Service {
                                 deviceid = (!deviceid.equals("") ? deviceid : DeviceInfoUtil.getUniquePsuedoID());
                                 device.setDeviceid(deviceid);
                                 device.setTime(time);
-                                LogUtil.debugLog("start connect socketio");
+                                LogUtil.debugLog("开始连接 socketio");
                                 //////////////
 
                                 Map devicemap = DeviceBeanReflect(device);
@@ -213,17 +213,17 @@ public class NotificationCollectorMonitorService extends Service {
         }
         private void ensureCollectorRunning() {
                 ComponentName collectorComponent = new ComponentName(this, /*NotificationListenerService Inheritance*/ NLService.class);
-                Log.v(TAG, "ensureCollectorRunning collectorComponent: " + collectorComponent);
+                Log.v(TAG, "确保收集器运行 收集器组件: " + collectorComponent);
                 ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
                 boolean collectorRunning = false;
                 List<ActivityManager.RunningServiceInfo> runningServices = manager.getRunningServices(Integer.MAX_VALUE);
                 if (runningServices == null ) {
-                        Log.w(TAG, "ensureCollectorRunning() runningServices is NULL");
+                        Log.w(TAG, "ensureCollectorRunning() 运行服务是 NULL");
                         return;
                 }
                 for (ActivityManager.RunningServiceInfo service : runningServices) {
                         if (service.service.equals(collectorComponent)) {
-                                Log.w(TAG, "ensureCollectorRunning service - pid: " + service.pid + ", currentPID: " + Process.myPid() + ", clientPackage: " + service.clientPackage + ", clientCount: " + service.clientCount
+                                Log.w(TAG, "确保收集器运行 service - pid: " + service.pid + ", currentPID: " + Process.myPid() + ", clientPackage: " + service.clientPackage + ", clientCount: " + service.clientCount
                                                 + ", clientLabel: " + ((service.clientLabel == 0) ? "0" : "(" + getResources().getString(service.clientLabel) + ")"));
                                 if (service.pid == Process.myPid() /*&& service.clientCount > 0 && !TextUtils.isEmpty(service.clientPackage)*/) {
                                         collectorRunning = true;
@@ -231,10 +231,10 @@ public class NotificationCollectorMonitorService extends Service {
                         }
                 }
                 if (collectorRunning) {
-                        Log.d(TAG, "ensureCollectorRunning: collector is running");
+                        Log.d(TAG, "ensureCollectorRunning: 收集器正在运行");
                         return;
                 }
-                Log.d(TAG, "ensureCollectorRunning: collector not running, reviving...");
+                Log.d(TAG, "ensureCollectorRunning: 收集器未运行, 复苏...");
                 toggleNotificationListenerService();
         }
 
